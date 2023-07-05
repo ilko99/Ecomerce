@@ -2,19 +2,38 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Order;
+use App\Models\OrderItem;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\VendorRegister;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Auth\Events\Registered;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Illuminate\Support\Facades\Notification;
 
 class VendorController extends Controller
 {
     public function VendorDashboard(){
-        return view('vendor.index');
+        $id = Auth::user()->id;
+        // $currentDate = Carbon::now();
+        // $date = $currentDate->format('Y-m-d');
+        // $month = $currentDate->format('m');
+
+        $date = date('d F Y');
+        
+        $today = OrderItem::whereHas('order', function ($query) use ($id, $date) {
+            $query->where('vendor_id', $id)->where('order_date', $date);
+        })->sum('price');
+
+        $orderItem = OrderItem::with('order')->where('vendor_id', $id)->orderBy('id' , 'DESC')->get();
+       
+
+        return view('vendor.index', compact('orderItem', 'today'));
     }
 
     public function VendorLogin(){
@@ -118,7 +137,9 @@ class VendorController extends Controller
             'message' => 'Vendor Registered Successfully',
             'alert-type' => 'success'
         );
-
+        $vuser = User::where('role', 'admin')->get();
+        Notification::send($vuser, new VendorRegister($request));
+        
         return redirect()->route('vendor.login')->with($notification);    
 
     }

@@ -47,7 +47,7 @@
                   </div>
                   <div class="form-group mb-3">
                     <label for="inputProductTitle" class="form-label">Product Collor</label>
-                    <input type="text" name="product_color" class="form-control visually-hidden" data-role="tagsinput" value="Red,Blue.Black">
+                    <input type="text" name="product_color" class="form-control visually-hidden" data-role="tagsinput" value="Red,Blue,Black">
                   </div>
                   <div class="form-group mb-3">
                     <label for="inputProductDescription" class="form-label">Short Description</label>

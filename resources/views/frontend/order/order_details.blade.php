@@ -86,7 +86,7 @@
                             <div class="col-md-6">
                                 <div class="card">
                                    <div class="card-header"><h4>Order Details
-                        <span class="text-danger">Invoice : {{ $order->invoice_no }} </span></h4>
+                                    <span class="text-danger">Invoice : {{ $order->invoice_no }} </span></h4>
                                     </div> 
                                    <hr>
                                    <div class="card-body">
@@ -124,7 +124,17 @@
                     
                                          <tr>
                                             <th>Order Status:</th>
-                          <th><span class="badge rounded-pill bg-warning">{{ $order->status }}</span></th>
+                                            <th>
+                                            @if($order->status == 'pending')
+                                            <span class="badge rounded-pill bg-warning">Pending</span>
+                                            @elseif($order->status == 'processing')
+                                            <span class="badge rounded-pill bg-info">Processing</span>
+                                            @elseif($order->status == 'confirmed')
+                                            <span class="badge rounded-pill bg-danger">Confirmed</span>
+                                            @elseif($order->status == 'delivered')
+                                            <span class="badge rounded-pill bg-success">Delivered</span>
+                                            @endif
+                                            </th>
                                         </tr>
                     
                                     </table>
@@ -234,9 +244,26 @@
             </div>
 
         </div>
+        {{-- Start Order return Option --}}
+        @if($order->status !== 'delivered')
 
+        @else
+<?php
+$order = App\Models\Order::where('id', $order->id)->where('return_order', 0)->first();
+?>
+@if($order)
+        <form action="{{route('return.order', $order->id)}}" method="POST">
+            @csrf
+        <div class="form-group" style="font-weight: 600; font-size: initial; color: #000000">
+            <label>Order Return Reason</label>
+            <textarea name="return_reson" class="form-control" id="" cols="30" rows="10"></textarea>
+        </div>
+        <button type="submit" class="btn btn-danger">Return Order</button>
+        </form>
+        @endif
+        {{-- End Order return Option --}}
     </div>
-
+@endif
 </div>
 
 @endsection

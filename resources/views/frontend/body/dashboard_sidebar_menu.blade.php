@@ -13,10 +13,10 @@ $route = Route::current()->getName();
                 <a class="nav-link {{ ($route == 'user.order.page') ? 'active' : ''}}" href="{{route('user.order.page')}}"><i class="fi-rs-shopping-bag mr-10"></i>Orders</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#track-orders"><i class="fi-rs-shopping-cart-check mr-10"></i>Track Your Order</a>
+                <a class="nav-link" {{ ($route == 'return.order.page') ? 'active' : ''}}  href="{{route('return.order.page')}}"><i class="fi-rs-shopping-cart-check mr-10"></i>Returned Orders</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="#address"><i class="fi-rs-marker mr-10"></i>My Address</a>
+                <a class="nav-link {{ ($route == 'user.track.order') ? 'active' : ''}}" href="{{ route('user.track.order') }}"><i class="fi-rs-marker mr-10"></i>Track your order</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link {{ ($route == 'user.account.page') ? 'active' : ''}}" href="{{route('user.account.page')}}"><i class="fi-rs-user mr-10"></i>Account details</a>

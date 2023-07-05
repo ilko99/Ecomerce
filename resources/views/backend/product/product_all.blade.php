@@ -66,8 +66,12 @@
                                     @endif
                                 </td>
                                 <td>
+                                    @if(Auth::user()->can('product.edit'))
                                     <a href="{{route('edit.product', $item->id)}}" class="btn btn-info" title="Edit Product"><i class="fa fa-pencil"></i></a>
+                                    @endif
+                                    @if(Auth::user()->can('product.delete'))
                                     <a href="{{route('product.delete', $item->id)}}" class="btn btn-danger" id="delete" title="Delete"><i class="fa fa-trash"></i></a>
+                                    @endif
                                     <a href="{{route('edit.category', $item->id)}}" class="btn btn-warning" title="Details Page"><i class="fa fa-eye"></i></a>
                                     @if($item->status == 1)
                                     <a href="{{route('product.inactive', $item->id)}}" class="btn btn-primary" title="Inactivate"><i class="fa-solid fa-thumbs-down"></i></a>

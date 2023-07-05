@@ -1,5 +1,8 @@
 @extends('frontend.master_dashboard')
 @section('main')
+@section('title')
+    {{$breadsubcat->subcategory_name}}
+@endsection
 <div class="page-header mt-30 mb-50">
     <div class="container">
         <div class="archive-header">
@@ -7,7 +10,7 @@
                 <div class="col-xl-3">
                     <h1 class="mb-15">{{$breadsubcat->subcategory_name}}</h1>
                     <div class="breadcrumb">
-                        <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                        <a href="/" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
                         <span></span> {{$breadsubcat->category->category_name}} <span></span> {{$breadsubcat->subcategory_name}}
                     </div>
                 </div>
@@ -24,25 +27,7 @@
                     <p>We found <strong class="text-brand">{{count($products)}}</strong> items for you!</p>
                 </div>
                 <div class="sort-by-product-area">
-                    <div class="sort-by-cover mr-10">
-                        <div class="sort-by-product-wrap">
-                            <div class="sort-by">
-                                <span><i class="fi-rs-apps"></i>Show:</span>
-                            </div>
-                            <div class="sort-by-dropdown-wrap">
-                                <span> 50 <i class="fi-rs-angle-small-down"></i></span>
-                            </div>
-                        </div>
-                        <div class="sort-by-dropdown">
-                            <ul>
-                                <li><a class="active" href="#">50</a></li>
-                                <li><a href="#">100</a></li>
-                                <li><a href="#">150</a></li>
-                                <li><a href="#">200</a></li>
-                                <li><a href="#">All</a></li>
-                            </ul>
-                        </div>
-                    </div>
+                    
                     <div class="sort-by-cover">
                         <div class="sort-by-product-wrap">
                             <div class="sort-by">
@@ -139,17 +124,14 @@
             <div class="pagination-area mt-20 mb-20">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination justify-content-start">
-                        <li class="page-item">
-                            <a class="page-link" href="#"><i class="fi-rs-arrow-small-left"></i></a>
-                        </li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link dot" href="#">...</a></li>
-                        <li class="page-item"><a class="page-link" href="#">6</a></li>
-                        <li class="page-item">
-                            <a class="page-link" href="#"><i class="fi-rs-arrow-small-right"></i></a>
-                        </li>
+                        <div class="pagination-area mt-20 mb-20">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination justify-content-start">   
+                                {{$products->links('pagination::bootstrap-4')}}
+                                </ul>
+                            </nav>
+                        </div>
+            
                     </ul>
                 </nav>
             </div>

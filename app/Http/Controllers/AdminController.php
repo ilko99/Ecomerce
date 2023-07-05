@@ -2,16 +2,55 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use App\Models\User;
+use App\Models\Order;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use App\Notifications\VendorApproved;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Notification;
 
 class AdminController extends Controller
 {
     public function AdminDashboard(){
-        return view('admin.index');
+        $date = date('d F Y');       
+        $yesterday = Carbon::yesterday()->format('d F Y');
+        $todayAmount = Order::where('order_date', $date)->sum('ammount');
+
+        $yesterdayAmount = Order::where('order_date', $yesterday)->sum('ammount');
+        
+        if ($yesterdayAmount != 0) {
+            $percentDiff = (($todayAmount - $yesterdayAmount) / $yesterdayAmount) * 100;
+            $formattedPercentage = number_format($percentDiff, 2);
+        } else {
+            // Handle the case where yesterday's amount is zero.
+            $formattedPercentage = 'N/A';
+        }
+
+
+        $month = date('F');
+        $thisMonthAmount = Order::where('order_month', $month)->sum('ammount');
+        $lastMonth = Carbon::now()->subMonths(1)->format('d F Y');
+        $lastMonthAmount = Order::where('order_month', $lastMonth)->sum('ammount');
+
+        if ($lastMonthAmount != 0) {
+            $percentDiffMonth = (($thisMonthAmount - $lastMonthAmount) / $lastMonthAmount) * 100;
+            $formattedPercentageMonth = number_format($percentDiffMonth, 2);
+        } else {
+            // Handle the case where yesterday's amount is zero.
+            $formattedPercentageMonth = 'N/A';
+        }
+
+        $year = date('Y');
+        $thisYear = Order::where('order_year', $year)->sum('ammount');
+
+        $pending = Order::where('status', 'pending')->get();
+
+        $orders = Order::where('status', 'pending')->orderBy('id', 'DESC')->limit(10)->get();
+        return view('admin.index', compact('todayAmount', 'yesterdayAmount', 'thisMonthAmount', 'lastMonthAmount', 'thisYear', 'pending', 'orders', 'formattedPercentage', 'formattedPercentageMonth'));
     }
 
     public function AdminLogin(){
@@ -113,6 +152,9 @@ class AdminController extends Controller
             'alert-type' => 'success'
         );
 
+        $vuser = User::where('role', 'vendor')->get();
+        Notification::send($vuser, new VendorApproved($request));
+
         return redirect()->route('active.vendor')->with($notification);
     }
 
@@ -135,4 +177,91 @@ class AdminController extends Controller
 
         return redirect()->route('inactive.vendor')->with($notification);
     }
+
+    /////// ADMIN ALL METHODS
+    
+    public function AllAdmin(){
+        $alladmin_user = User::where('role', 'admin')->latest()->get();
+        return view('backend.admin.all_admin', compact('alladmin_user'));
+    }
+
+    public function AddAdmin(){
+        $roles = Role::all();
+        return view('backend.admin.add_admin', compact('roles'));
+    }
+
+    public function AdminUserStore(Request $request){
+        $user = new User();
+        $user->username = $request->username;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->address = $request->address;
+        $user->password = Hash::make($request->password);
+        $user->role = 'admin';
+        $user->status = 'active';
+        $user->save();
+
+        if($request->roles){
+            $user->assignRole($request->roles);
+        }
+
+        $notification = array(
+            'message' => 'New Admin User Inserted Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('all.admin')->with($notification);
+    }
+
+    public function EditAdminRole($id){
+
+        $user = User::findOrFail($id);
+        $roles = Role::all();
+        return view('backend.admin.edit_admin',compact('user','roles'));
+    }
+
+    public function AdminUserUpdate(Request $request,$id){
+
+
+        $user = User::findOrFail($id);
+        $user->username = $request->username;
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->phone = $request->phone;
+        $user->address = $request->address; 
+        $user->role = 'admin';
+        $user->status = 'active';
+        $user->save();
+
+        $user->roles()->detach();
+        if ($request->roles) {
+            $user->assignRole($request->roles);
+        }
+
+         $notification = array(
+            'message' => 'New Admin User Updated Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->route('all.admin')->with($notification);
+
+    }
+
+    public function DeleteAdminRole($id){
+        $user = User::findOrFail($id);
+
+        if(!is_null($user)){
+            $user->delete();
+        }
+
+        $notification = array(
+            'message' => 'Admin User Deleted Successfully',
+            'alert-type' => 'success'
+        );
+
+        return redirect()->back()->with($notification);
+    }
+
+
 }

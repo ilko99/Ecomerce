@@ -39,7 +39,7 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'subcategory_id' => $request->subcategory_id,
             'product_name' => $request->product_name,
-            'product_slug' => strtolower(str_replace(' ', '-',$request->brand_id)),
+            'product_slug' => strtolower(str_replace(' ', '-',$request->product_name)),
             'product_code' => $request->product_code,
             'product_quantity' => $request->product_quantity,
             'product_tags' => $request->product_tags,
@@ -242,4 +242,10 @@ public function ProductDelete($id){
     return redirect()->back()->with($notification);
 }
 
+
+public function ProductStock(){
+    $products = Product::latest()->get();
+
+    return view('backend.product.product_stock', compact('products'));
+}
 }

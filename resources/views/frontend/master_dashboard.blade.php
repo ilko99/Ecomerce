@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="utf-8" />
-    <title>Easy shop</title>
+    <title> @yield('title') </title>
     <meta http-equiv="x-ua-compatible" content="ie=edge" />
     <meta name="description" content="" />
     <meta name="csrf-token" content="{{csrf_token()}}"/>
@@ -14,6 +14,7 @@
     <meta property="og:image" content="" />
     <!-- Favicon -->  
     <link rel="shortcut icon" type="image/x-icon" href="{{ asset('frontend/assets/imgs/theme/favicon.svg') }}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.css" type="text/css" media="all" />
     <!-- Template CSS -->
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/plugins/animate.min.css') }}" />
     <link rel="stylesheet" href="{{ asset('frontend/assets/css/main.css?v=5.3') }}" />
@@ -68,7 +69,9 @@
     <!-- Template  JS -->
     <script src="{{ asset('frontend/assets/js/main.js?v=5.3') }}"></script>
     <script src="{{ asset('frontend/assets/js/shop.js?v=5.3') }}"></script>
+    <script src="{{ asset('frontend/assets/js/scripts.js') }}"></script>
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" type="text/javascript"></script>
 
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
 
@@ -91,36 +94,6 @@
      }
      @endif 
     </script>
-
-    {{-- <script type="text/javascript">
-        $.ajaxSetup({
-            headers:{
-                'X-CSRF-TOKEN':$('meta[name="csrf-token"]').attr('content')
-            }
-        })
-
-        //// Start product with model
-
-        function productView(id){
-            // alert(id) This works
-           
-
-            $.ajax({
-                type: 'GET',
-                url: '/product/view/model/'+id,
-                dataType: 'json',
-                success: function(data){
-                    console.log(data); This also works
-                    // $('#pname').text(data.product.product_name),
-                    // $('#pprice').text(data.product.selling_price),
-                    // $('#pcode').text(data.product.product_code),
-                    // $('#pcategory').text(data.product.category.category_name),
-                    // $('#pbrand').text(data.product.brand.brand_name),
-                    // $('#pimage').attr('src', '/'+data.product.product_thumbnail),
-                }
-            })
-        }
-    </script> --}}
 
     <script type="text/javascript">
         $.ajaxSetup({
@@ -202,7 +175,7 @@
         function addToCart(){
             var product_name = $('#pname').text();
             var id = $('#product_id').val();
-            var vendor = $('#pvendor_id').val();
+            var vendor = $('#pvendor_id').text();
             var color = $('#color option:selected').text();
             var size = $('#size option:selected').text();
             var quantity = $('#qty').val();

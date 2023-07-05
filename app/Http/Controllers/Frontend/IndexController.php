@@ -45,7 +45,9 @@ class IndexController extends Controller
         $cat_id = $product->category_id;
         $related_product = Product::where('category_id', $cat_id)->where('id', '!=', $id)->orderBy('id', 'DESC')->limit(4)->get();
 
-        return view('frontend.product.product_details', compact('product', 'product_color', 'product_size', 'multiImage', 'related_product'));
+        $category = Category::all();
+
+        return view('frontend.product.product_details', compact('product', 'product_color', 'product_size', 'multiImage', 'related_product', 'category'));
     }
 
     public function VendorDetails($id){
@@ -60,7 +62,7 @@ class IndexController extends Controller
     }
 
     public function CatWiseProduct(Request $request, $id, $slug){
-        $products = Product::where('status', 1)->where('category_id', $id)->orderBy('id', 'DESC')->get();
+        $products = Product::where('status', 1)->where('category_id', $id)->orderBy('id', 'DESC')->paginate(20);
         $categories = Category::orderBy('category_name', 'ASC')->get();
         $breadcat = Category::where('id', $id)->first();
 
@@ -70,7 +72,7 @@ class IndexController extends Controller
     }
 
     public function SubCatWiseProduct(Request $request, $id, $slug){
-        $products = Product::where('status', 1)->where('subcategory_id', $id)->orderBy('id', 'DESC')->get();
+        $products = Product::where('status', 1)->where('subcategory_id', $id)->orderBy('id', 'DESC')->paginate(20);
         $categories = Category::orderBy('category_name', 'ASC')->get();
         $breadsubcat = Subcategory::where('id', $id)->first();
 
@@ -98,4 +100,31 @@ class IndexController extends Controller
 
      }// End Method 
 
+
+     public function ProductSearch(Request $request){
+        $request->validate(['search' => 'required']);
+
+        $item = $request->search;
+
+        $products = Product::where('product_name', 'LIKE', "%$item%")->get();
+
+        $categories = Category::orderBy('category_name', 'ASC')->get();
+
+        $new_product = Product::orderBy('id', 'DESC')->limit(3)->get();
+
+        return view('frontend.product.search', compact('products', 'item', 'categories', 'new_product'));
+     }
+
+     public function SearchProduct(Request $request){
+        $request->validate(['search' => 'required']);
+
+        $item = $request->search;
+        $products = Product::where('product_name', 'LIKE', "%$item%")->select('product_name', 'product_slug', 'product_thumbnail', 'selling_price', 'id')->limit(6)->get();
+
+        return view('frontend.product.search_product', compact('products'));
+     }
+
+     public function AboutUs(){
+        return view('frontend.about_us');
+     }
 }

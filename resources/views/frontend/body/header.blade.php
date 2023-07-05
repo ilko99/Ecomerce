@@ -5,47 +5,10 @@
     <div class="header-top header-top-ptb-1 d-none d-lg-block">
         <div class="container">
             <div class="row align-items-center">
-                <div class="col-xl-3 col-lg-4">
-                    <div class="header-info">
-                        <ul>
 
-                            <li><a href="page-account.html">My Cart</a></li>
-                            <li><a href="shop-wishlist.html">Checkout</a></li>
-                            <li><a href="shop-order.html">Order Tracking</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="col-xl-6 col-lg-4">
-                    <div class="text-center">
-                        <div id="news-flash" class="d-inline-block">
-                            <ul>
-                                <li>100% Secure delivery without contacting the courier</li>
-                                <li>Supper Value Deals - Save more with coupons</li>
-                                <li>Trendy 25silver jewelry, save up 35% off today</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
                 <div class="col-xl-3 col-lg-4">
                     <div class="header-info header-info-right">
                         <ul>
-
-            <li>
-                <a class="language-dropdown-active" href="#">English <i class="fi-rs-angle-small-down"></i></a>
-                <ul class="language-dropdown">
-                    <li>
-                        <a href="#"><img src="{{ asset('frontend/assets/imgs/theme/flag-fr.png') }}" alt="" />Français</a>
-                    </li>
-                    <li>
-                        <a href="#"><img src="{{ asset('frontend/assets/imgs/theme/flag-dt.png') }}" alt="" />Deutsch</a>
-                    </li>
-                    <li>
-                        <a href="#"><img src="{{ asset('frontend/assets/imgs/theme/flag-ru.png') }}" alt="" />Pусский</a>
-                    </li>
-                </ul>
-            </li>
-
-             <li>Need help? Call Us: <strong class="text-brand"> + 1800 900</strong></li>
 
                         </ul>
                     </div>
@@ -53,53 +16,26 @@
             </div>
         </div>
     </div>
+    <?php
+    $setting = App\Models\SiteSetting::find(1);
+    ?>
     <div class="header-middle header-middle-ptb-1 d-none d-lg-block">
         <div class="container">
             <div class="header-wrap">
                 <div class="logo logo-width-1">
-                    <a href="index.html"><img src="{{ asset('frontend/assets/imgs/theme/logo.svg') }}" alt="logo" /></a>
+                    <a href="/"><img src="{{ asset($setting->logo) }}" alt="logo" /></a>
                 </div>
 <div class="header-right">
     <div class="search-style-2">
-        <form action="#">
-            <select class="select-active">
-                <option>All Categories</option>
-                <option>Milks and Dairies</option>
-                <option>Wines & Alcohol</option>
-                <option>Clothing & Beauty</option>
-                <option>Pet Foods & Toy</option>
-                <option>Fast food</option>
-                <option>Baking material</option>
-                <option>Vegetables</option>
-                <option>Fresh Seafood</option>
-                <option>Noodles & Rice</option>
-                <option>Ice cream</option>
-            </select>
-            <input type="text" placeholder="Search for items..." />
+        <form action="{{route('product.search')}}" method="POST">
+            @csrf
+
+            <input onfocus="search_result_show()" onblur="search_result_hide()" name="search" id="search" placeholder="Search for items..." />
+            <div id="searchProducts"></div>
         </form>
     </div>
     <div class="header-action-right">
         <div class="header-action-2">
-            <div class="search-location">
-                <form action="#">
-                    <select class="select-active">
-                        <option>Your Location</option>
-                        <option>Alabama</option>
-                        <option>Alaska</option>
-                        <option>Arizona</option>
-                        <option>Delaware</option>
-                        <option>Florida</option>
-                        <option>Georgia</option>
-                        <option>Hawaii</option>
-                        <option>Indiana</option>
-                        <option>Maryland</option>
-                        <option>Nevada</option>
-                        <option>New Jersey</option>
-                        <option>New Mexico</option>
-                        <option>New York</option>
-                    </select>
-                </form>
-            </div>
             <div class="header-action-icon-2">
                 <a href="{{ route('compare') }}">
                     <img class="svgInject" alt="Nest" src="{{ asset('frontend/assets/imgs/theme/icons/icon-compare.svg')}}" />
@@ -150,16 +86,13 @@
                                             <a href="{{route('dashboard')}}"><i class="fi fi-rs-user mr-10"></i>My Account</a>
                                         </li>
                                         <li>
-                                            <a href="{{route('dashboard')}}"><i class="fi fi-rs-location-alt mr-10"></i>Order Tracking</a>
+                                            <a href="{{ route('user.track.order') }}"><i class="fi fi-rs-location-alt mr-10"></i>Order Tracking</a>
                                         </li>
                                         <li>
-                                            <a href="{{route('dashboard')}}"><i class="fi fi-rs-label mr-10"></i>My Voucher</a>
+                                            <a href="{{ route('wishlist') }}"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a>
                                         </li>
                                         <li>
-                                            <a href="s{{route('dashboard')}}"><i class="fi fi-rs-heart mr-10"></i>My Wishlist</a>
-                                        </li>
-                                        <li>
-                                            <a href="{{route('dashboard')}}"><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a>
+                                            <a href="{{route('user.account.page')}}"><i class="fi fi-rs-settings-sliders mr-10"></i>Setting</a>
                                         </li>
                                         <li>
                                             <a href="{{route('user.logout')}}"><i class="fi fi-rs-sign-out mr-10"></i>Sign out</a>
@@ -205,40 +138,23 @@ $categories = App\Models\Category::orderBy('category_name', 'ASC')->get();
                             <div class="d-flex categori-dropdown-inner">
                                 <ul>
                                     @foreach($categories as $item)
+                                        @if($loop->index < 5)
                                     <li>
-                                        <a href="shop-grid-right.html"> <img src="{{ asset($item->category_image) }}" alt="" />{{$item->category_name}}</a>
+                                        <a href="{{ url('product/category/' . $item->id . '/' . $item->category_slag)}}"> <img src="{{ asset($item->category_image) }}" alt="" />{{$item->category_name}}</a>
                                     </li>
+                                        @endif
                                     @endforeach
                                 </ul>
                                 <ul class="end">
                                     @foreach($categories as $item)
+                                        @if($loop->index > 4)
                                     <li>
-                                        <a href="shop-grid-right.html"> <img src="{{ asset($item->category_image) }}" alt="" />{{$item->category_name}}</a>
+                                        <a href="{{ url('product/category/' . $item->id . '/' . $item->category_slag)}}"> <img src="{{ asset($item->category_image) }}" alt="" />{{$item->category_name}}</a>
                                     </li>
+                                        @endif
                                     @endforeach
                                 </ul>
                             </div>
-                            <div class="more_slide_open" style="display: none">
-                                <div class="d-flex categori-dropdown-inner">
-                                    <ul>
-                                        <li>
-                                            <a href="shop-grid-right.html"> <img src="{{ asset('frontend/assets/imgs/theme/icons/icon-1.svg') }}" alt="" />Milks and Dairies</a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html"> <img src="{{ asset('frontend/assets/imgs/theme/icons/icon-2.svg') }}" alt="" />Clothing & beauty</a>
-                                        </li>
-                                    </ul>
-                                    <ul class="end">
-                                        <li>
-                                            <a href="shop-grid-right.html"> <img src="{{ asset('frontend/assets/imgs/theme/icons/icon-3.svg') }}" alt="" />Wines & Drinks</a>
-                                        </li>
-                                        <li>
-                                            <a href="shop-grid-right.html"> <img src="{{ asset('frontend/assets/imgs/theme/icons/icon-4.svg') }}" alt="" />Fresh Seafood</a>
-                                        </li>
-                                    </ul>
-                                </div>
-                            </div>
-                            <div class="more_categories"><span class="icon"></span> <span class="heading-sm-1">Show more...</span></div>
                         </div>
                     </div>
                     <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block font-heading">
@@ -272,7 +188,10 @@ $categories = App\Models\Category::orderBy('category_name', 'ASC')->get();
             
             
                                 <li>
-                                    <a href="page-contact.html">Contact</a>
+                                    <a href="{{ route('home.blog') }}">Blog</a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('shop.page') }}">Shop</a>
                                 </li>
                             </ul>
                         </nav>
@@ -282,7 +201,7 @@ $categories = App\Models\Category::orderBy('category_name', 'ASC')->get();
 
 <div class="hotline d-none d-lg-flex">
 <img src="{{ asset('frontend/assets/imgs/theme/icons/icon-headphone.svg') }}" alt="hotline" />
-<p>1900 - 888<span>24/7 Support Center</span></p>
+<p>{{$setting->support_phone}}<span>24/7 Support Center</span></p>
 </div>
 <div class="header-action-icon-2 d-block d-lg-none">
 <div class="burger-icon burger-icon-white">
@@ -348,6 +267,28 @@ $categories = App\Models\Category::orderBy('category_name', 'ASC')->get();
         </div>
     </div>
 </header>
+
+<style>
+     #searchProducts{
+        position: absolute;
+        top: 100%;
+        left: 0;
+        width: 100%;
+        background: #ffffff;
+        z-index: 999;
+        border-radius: 8px;
+        margin-top: 5px;
+    }
+</style>
+
+<script>
+    function search_result_show(){
+        $("#searchProducts").slideDown();
+    }
+    function search_result_hide(){
+        $("#searchProducts").slideUp();
+    }
+</script>
 
 <div class="mobile-header-active mobile-header-wrapper-style">
     <div class="mobile-header-wrapper-inner">

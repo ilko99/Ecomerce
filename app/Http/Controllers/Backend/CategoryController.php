@@ -23,19 +23,6 @@ class CategoryController extends Controller
 
     public function StoreCategory(Request $request){
 
-        // $validateData = $request->validated();
-        // $category = Category::create($validateData);
-
-        // if($request->hasFile('category_image')){
-        //     $path = $request->file('category_image')->store('images', 'public');
-        //     $category->image()->save(
-        //         Images::make(['path' => $path])
-        //     );
-
-        // }
-
-        // return redirect()->route('all.category', ['category' => $category->id])->with('success', 'Category created successfully');
-
         $image = $request->file('category_image');
         $name_gen = hexdec(uniqid()).'.'.$image->getClientOriginalExtension();
         Image::make($image)->resize(120,120)->save('upload/category/'.$name_gen);

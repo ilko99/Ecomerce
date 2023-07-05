@@ -4,14 +4,18 @@ namespace App\Http\Controllers\User;
 
 use Carbon\Carbon;
 use Stripe\Stripe;
+use App\Models\User;
 use App\Models\Order;
 use App\Mail\OrderMail;
 use App\Models\OrderItem;
 use Illuminate\Http\Request;
+use App\Notifications\OrderPending;
 use App\Http\Controllers\Controller;
+use App\Notifications\OrderComplete;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Gloudemans\Shoppingcart\Facades\Cart;
+use Illuminate\Support\Facades\Notification;
 
 class StripeController extends Controller
 {
@@ -161,6 +165,11 @@ class StripeController extends Controller
             'alert-type' => 'success'
         );
 
+        $user = User::where('role', 'admin')->get();
+        $vendor = OrderItem::with('user')->where('vendor_id', 'id')->get();
+
+        Notification::send($vendor, new OrderPending($request->name));
+        Notification::send($user, new OrderComplete($request->name));
         return redirect()->route('dashboard')->with($notification);
 
     }

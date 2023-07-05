@@ -58,10 +58,14 @@
                                                             <span class="badge rounded-pill bg-danger">Confirmed</span>
                                                             @elseif($order->status == 'delivered')
                                                             <span class="badge rounded-pill bg-success">Delivered</span>
+
+                                                                @if($order->return_order == 1)
+                                                                <span class="badge" style="background: red;">Returning</span>
+                                                                @endif
                                                             @endif
                                                         </td>
                                                         <td><a href="{{ url('/user/order/details/'.$order->id) }}" class="btn-sm btn-success">View</a></td>
-                                                        <td><a href="#" class="btn-sm btn-danger">Download Invoice</a></td>    
+                                                        <td><a href="{{ url('/user/invoice/download/'.$order->id) }}" class="btn-sm btn-danger">Download Invoice</a></td>    
                                                     </tr>
                                                     @endforeach 
                                                 </tbody>

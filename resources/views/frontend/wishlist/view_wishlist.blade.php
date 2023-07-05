@@ -1,6 +1,8 @@
 @extends('frontend.master_dashboard')
 @section('main')
-
+@section('title')
+    MyWishlist
+@endsection
 <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
@@ -14,7 +16,6 @@
                 <div class="col-xl-10 col-lg-12 m-auto">
                     <div class="mb-50">
                         <h1 class="heading-2 mb-10">Your Wishlist</h1>
-                        <h6 class="text-body">There are products in this list</h6>
                     </div>
                     <div class="table-responsive shopping-summery">
                         <table class="table table-wishlist">
